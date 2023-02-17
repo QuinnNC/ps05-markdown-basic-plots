@@ -65,9 +65,9 @@ You first task is to do a very simple data check:
 1. (3pt) How many countries are there in the dataset? Analyze all three: iso3, iso2 and name.
 2. If you did this correctly, you saw that there are more names than iso-2 codes, and there are
 even more iso3 -codes. What is going on? Can you find it out?
-(a) (5pt) Find how many names are there for each iso-2 code. Are there any iso-2 codes that
+  (a) (5pt) Find how many names are there for each iso-2 code. Are there any iso-2 codes that
 correspond to more than one name? What are these countries?
-(b) (5pt) Now repeat the same for name and iso3-code. Are there country names that have
+  (b) (5pt) Now repeat the same for name and iso3-code. Are there country names that have
 more than one iso3-code? What are these countries?
 Hint: two of these entitites are CHANISL and NLD CURACAO.
 3. (2pt) What is the minimum and maximum year in these data?
@@ -109,14 +109,14 @@ different size.
 5. (8pt) Compute the average LE growth from 1960-2019 across the continents. Show the results
 in the order of growth. Explain what do you see.
 Hint: these data (data in long form) is not the simplest to compute growth. But you may
-want to check out the lag() function. And do not forget to group data by continent when
-using lag(), otherwise your results will be messed up! See https://faculty.washington.
+want to check out the `lag()` function. And do not forget to group data by continent when
+using `lag()`, otherwise your results will be messed up! See https://faculty.washington.
 edu/otoomet/info201-book/dplyr.html#dplyr-helpers-compute.
 6. (6pt) Show the histogram of GDP per capita for years of 1960 and 2019. Try to put both
 histograms on the same graph, see how well you can do it!
 7. (6pt) What was the ranking of US in terms of life expectancy in 1960 and in 2019? (When
 counting from top.)
-Hint: check out the function rank()!
+Hint: check out the function `rank()`!
 Hint2: 17 for 1960.
 8. (6pt) If you did this correctly, then you noticed that US ranking has been falling quite a
 bit. But we also have more countries in 2019–what about the relative rank divided by the
