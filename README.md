@@ -84,8 +84,8 @@ Hint: these data (data in long form) is not the simplest to compute growth. But 
 want to check out the `lag()` function. And do not forget to group data by continent when using `lag()`, otherwise your results will be messed up! See https://faculty.washington.edu/otoomet/info201-book/dplyr.html#dplyr-helpers-compute.
 6. (6pt) Show the histogram of GDP per capita for years of 1960 and 2019. Try to put both histograms on the same graph, see how well you can do it!
 7. (6pt) What was the ranking of US in terms of life expectancy in 1960 and in 2019? (When counting from top.)
-Hint: check out the function `rank()`!
-Hint2: 17 for 1960.
+Hint 1: check out the function `rank()`!
+Hint 2: 17 for 1960.
 8. (6pt) If you did this correctly, then you noticed that US ranking has been falling quite a bit. But we also have more countries in 2019–what about the relative rank divided by the corresponding number of countries that have LE data in the corresponding year?
 Hint: 0.0904 for 1960.
 
