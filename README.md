@@ -89,7 +89,7 @@ Hint: Americas 2016 should be 4.80.
 5. (7pt) Make a barplot where you show the previous results–average CO2 emissions per capita
 across continents in 1960 and 2016.
 Hint: it should look something along these lines: 
-
+![example picture of plot](data/Screenshot_20230217_105721.png)
 6. Which countries are the three largest, and three smallest CO2 emitters (in terms of CO2 per
 capita) in 2019 for each continent? (Assume region is continent).
 
@@ -125,4 +125,4 @@ Hint: 0.0904 for 1960.
 
 ## Finally
 
-tell us how many hours did you spend on this PS.
+Tell us how many hours did you spend on this PS.
