@@ -4,7 +4,7 @@ problem set 5 repo - markdown and basic plots
 ## Instructions
 
 This is a problem set about rmarkdown and plotting (using ggplot). Unlike the previous problem
-sets, this one does not give you a ready-made GH repo with a code file–it is now your taks to create
+sets, this one does not give you a ready-made GH repo with a code file–it is now your task to create
 a repo and include your rmarkdown file in there.
 You should answer the questions below in that file, knit it, and submit both the compiled html
 and link to your repo on canvas.
