@@ -85,7 +85,6 @@ same countries. What does this figure suggest?
 same as continent). Comment what do you see.
 Note: just compute averages over countries and ignore the fact that countries are of different
 size.
-
 Hint: Americas 2016 should be 4.80.
 5. (7pt) Make a barplot where you show the previous results–average CO2 emissions per capita
 across continents in 1960 and 2016.
