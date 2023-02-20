@@ -7,6 +7,8 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+
 ```
 
 ## 1. Load and check data (5pt)
@@ -15,24 +17,83 @@ You first task is to do a very simple data check:
 
 1. (1pt) Create a new rmarkdown document with an appropriate title.
 
+=> That would be this document right here !! ^.^
+
 2. (2pt) Load data. How many rows/columns do we have?
+```{r, echo = FALSE}
+gapMinder <- read_delim("data/gapminder.csv.bz2")
+
+```
 
 3. (2pt) Print a small sample of data. Does it look OK?
 
+=> Yes! This looks correct!
+
+```{r, echo = FALSE}
+sample_n(gapMinder, 3)
+
+```
 
 ## 2. Descriptive statistics (15pt)
 
 1. (3pt) How many countries are there in the dataset? Analyze all three: iso3, iso2 and name.
+```{r, echo = FALSE}
+iso3Distinct <- gapMinder %>% 
+  filter(!is.na(iso3)) %>% 
+  distinct(iso3) %>% 
+  nrow()
+iso2Distinct <- gapMinder %>% 
+  filter(!is.na(iso2)) %>% 
+  distinct(iso2) %>% 
+  nrow()
+nameDistinct <- gapMinder %>% 
+  filter(!is.na(name)) %>% 
+  distinct(name) %>% 
+  nrow()
+
+```
+
+There are `r iso3Distinct` distinct 3-letter country codes, `r iso2Distinct` distinct 2-letter country codes, and 
+`r nameDistinct` distinct country names.
 
 2. If you did this correctly, you saw that there are more names than iso-2 codes, and there are even more iso3 -codes. What is going on? Can you find it out?
 
 (a) (5pt) Find how many names are there for each iso-2 code. Are there any iso-2 codes that correspond to more than one name? What are these countries?
+```{r, echo = FALSE}
+gapMinder %>% 
+  group_by(iso2) %>% 
+  filter(n_distinct(name) > 1) %>% 
+  distinct(name)
+```
+
+There are two distinct name values that correspond to a single iso2 code value "NA", those are listed above.
 
 (b) (5pt) Now repeat the same for name and iso3-code. Are there country names that have more than one iso3-code? What are these countries?
 Hint: two of these entitites are CHANISL and NLD CURACAO.
+```{r, echo = FALSE}
+gapMinder %>% 
+  group_by(name) %>% 
+  filter(n_distinct(iso3) > 1) %>% 
+  distinct(iso3)
+```
+
+There are four distinct iso3 values that correspond to the same name value "NA", those countries are shown above.
 
 3. (2pt) What is the minimum and maximum year in these data?
+```{r, echo = FALSE}
+minTime <- gapMinder %>%
+  filter(!is.na(time)) %>% 
+  arrange(time) %>% 
+  select(time) %>% 
+  head(1)
 
+maxTime <- gapMinder %>%
+  filter(!is.na(time)) %>% 
+  arrange(time) %>% 
+  select(time) %>% 
+  tail(1)
+```
+In these data, the minimum year time is `r minTime`, and the maximum year time is `r maxTime`.
 
 ## 3. CO2 emissions (30pt)
 
@@ -40,45 +101,174 @@ Next, let’s analyze CO2 emissions.
 
 1. (2pt) How many missing co2 emissions are there for each year? Analyze both missing CO2 and co2_PC. Which years have most missing data?
 
+The following table showcases the amount of missing CO2 and CO2_PC data points each year, ranking from most to least.
+
+```{r, echo = FALSE}
+gapMinder %>% 
+  select(time, co2, co2_PC) %>% 
+  group_by(time) %>% 
+  summarise(co2Missin = sum(!is.na(co2)), co2_PC_Missing = sum(!is.na(co2_PC))) %>% 
+  arrange(desc(co2Missin), desc(co2_PC_Missing))
+```
+
 2. (5pt) Make a plot of total CO2 emissions over time for the U.S, China, and India. Add a few more countries of your choice. Explain what do you see.
+```{r, echo = FALSE}
+gapMinder %>% 
+  filter(name == c("United States of America", "China", "India", "Ukraine", "Italy")) %>% 
+  select(name, time, co2) %>% 
+  filter(!is.na(co2)) %>% 
+  ggplot(aes(time, co2, col = name)) +
+  geom_point() +
+  geom_line() +
+  labs(title = "Total CO2 emissions over time across some countries",
+       x = "time (year)",
+       y = "CO2 emissions (kt)", 
+       color = "Country") 
+
+```
+
+What this plot tells me is that the larger the nation, the greater the CO2 emissions over all, as well was the greater the increase in CO2 emission over time.
 
 3. (5pt) Now let’s analyze the CO2 emissions per capita (co2_PC). Make a similar plot of the same countries. What does this figure suggest?
+```{r, echo = FALSE}
+gapMinder %>% 
+  filter(name == c("United States of America", "China", "India", "Ukraine", "Italy")) %>% 
+  select(name, time, co2_PC) %>% 
+  filter(!is.na(co2_PC)) %>% 
+  ggplot(aes(time, co2_PC, col = name)) +
+  geom_point() +
+  geom_line() +
+  labs(title = "Total CO2 emissions per capita over time across some countries",
+       x = "time (year)",
+       y = "CO2 emissions per capita (metric tons)", 
+       color = "Country") 
+```
+
+When looking at emissions per capita, we then see that China, which ranked higher in total emissions, have much lower emissions per capital, where as America remains the same. 
+Another interesting point is that when looking at total emissions, America's increases over time, but when looking at per capita, then the number actually is remains relatively the same.
 
 4. (6pt) Compute average CO2 emissions per capita across the continents (assume region is the same as continent). Comment what do you see.
 Note: just compute averages over countries and ignore the fact that countries are of different size.
 Hint: Americas 2016 should be 4.80.
+```{r, echo = FALSE}
+gapMinder %>% 
+  group_by(region, time) %>% 
+  select(region, time, co2_PC) %>% 
+  filter(!is.na(co2_PC)) %>% 
+  summarise(aveEmission = mean(co2_PC))
+
+```
 
 5. (7pt) Make a barplot where you show the previous results–average CO2 emissions per capita across continents in 1960 and 2016.
+```{r, echo = FALSE}
+gapMinder %>% 
+  group_by(region, time) %>% 
+  select(region, time, co2_PC) %>% 
+  filter(!is.na(co2_PC)) %>% 
+  filter(!is.na(region)) %>% 
+  filter(time <= 2016) %>% 
+  summarise(aveEmission = mean(co2_PC)) %>% 
+  ggplot(aes( time, aveEmission, fill = region)) +
+  geom_col()+
+  labs(title = "Average CO2 emissions per capita over time across the Continents (1960 - 2016)",
+       x = "time (year)",
+       y = "average CO2 emissions per capita (metric tons)", 
+       fill = "Continents")
+```
 
 6. Which countries are the three largest, and three smallest CO2 emitters (in terms of CO2 per capita) in 2019 for each continent? (Assume region is continent).
+```{r, echo = FALSE}
+gapMinder %>% 
+  filter(time == 2019) %>% 
+  filter(!is.na(region)) %>% 
+  select(region, name, time, co2_PC) %>% 
+  arrange(region)
+```
 
+As shown in the table above, unfortunately, the countries that are the three largest, and three smallest CO2 emitters in 2019 for each continent can not be computed since the data is missing.
 
 ## 4.  GDP per capita (50pt)
 
 1. (8pt) Make a scatterplot of GDP per capita versus life expectancy by country, using data for 1960. Make the point size dependent on the country size, and color those according to the continent. Feel free to adjust the plot in other ways to make it better.
 Comment what do you see there.
+```{r, echo = FALSE}
+gapMinder %>% 
+  filter(time == 1960) %>% 
+  select(region, name, totalPopulation, GDP_PC, lifeExpectancy) %>% 
+  filter(!is.na(GDP_PC)) %>% 
+  filter(!is.na(lifeExpectancy)) %>% 
+  ggplot(aes(GDP_PC, lifeExpectancy, col = region, size = totalPopulation)) +
+  geom_point() +
+  labs(title = "GDP per capita versus life expectancy by country (1960)",
+       x = "GDP per capita",
+       y = "Life expectancy at birth (years)", 
+       col = "Continents", 
+       size = "Total population")
+
+```
+
+There seems to be a positive correlation between the two variables GDP_PC and lifeExpectancy, which translates to the higher the GDP_PC, the higher lifeExpectancy in that country. 
 
 2. (4pt) Make a similar plot, but this time use 2019 data only.
+```{r, echo = FALSE}
+gapMinder %>% 
+  filter(time == 2019) %>% 
+  select(region, name, totalPopulation, GDP_PC, lifeExpectancy) %>% 
+  filter(!is.na(GDP_PC)) %>% 
+  filter(!is.na(lifeExpectancy)) %>% 
+  ggplot(aes(GDP_PC, lifeExpectancy, col = region, size = totalPopulation)) +
+  geom_point() +
+  labs(title = "GDP per capita versus life expectancy by country (2019)",
+       x = "GDP per capita",
+       y = "Life expectancy at birth (years)", 
+       col = "Continents", 
+       size = "Total population")
+
+```
 
 3. (6pt) Compare these two plots and comment what do you see. How has world developed through the last 60 years?
 
+The correlation between the two vairbles GDP_PC and lifeExpectancy remains the same, which is a positive correlation where as one increases, so does the other. 
+
+However, when looking into more details, there are some differences that can be seen: 
+
+- 2019 has more data available (or less missing data) hence there are more data points graphed. 
+- both GDP_PC and lifeExpectancy values are larger in 2019 than in 1960.
+- The population had also grown larger in 2019 compared to 1960.
+
 4. (6pt) Compute the average life expectancy for each continent in 1960 and 2019. Do the results fit with what do you see on the figures?
 Note: here as average I mean just average over countries, ignore the fact that countries are of different size.
+```{r, echo = FALSE}
+
+```
 
 5. (8pt) Compute the average LE growth from 1960-2019 across the continents. Show the results in the order of growth. Explain what do you see.
 Hint: these data (data in long form) is not the simplest to compute growth. But you may want to check out the `lag()` function. And do not forget to group data by continent when using `lag()`
+```{r, echo = FALSE}
+
+```
 
 6. (6pt) Show the histogram of GDP per capita for years of 1960 and 2019. Try to put both histograms on the same graph, see how well you can do it!
+```{r, echo = FALSE}
+
+```
 
 7. (6pt) What was the ranking of US in terms of life expectancy in 1960 and in 2019? (When counting from top.)
 Hint 1: check out the function `rank()`!
 Hint 2: 17 for 1960.
+```{r, echo = FALSE}
+
+```
 
 8. (6pt) If you did this correctly, then you noticed that US ranking has been falling quite a bit. But we also have more countries in 2019–what about the relative rank divided by the corresponding number of countries that have LE data in the corresponding year?
 Hint: 0.0904 for 1960.
+```{r, echo = FALSE}
+
+```
 
 ## Finally
 
 Tell us how many hours did you spend on this PS.
-about 1hr 30 min to set up the assignment.
+- Took about 1hr 30 min to set up the assignment. (10:30am - 12pm)
+- Left and came back to this assignment (2pm - 5pm), next day (7pm - 8:30pm)()
 
