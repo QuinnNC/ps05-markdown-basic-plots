@@ -153,7 +153,6 @@ Hint: Americas 2016 should be 4.80.
 ```{r, echo = FALSE}
 gapMinder %>% 
   group_by(region, time) %>% 
-  select(region, time, co2_PC) %>% 
   filter(!is.na(co2_PC)) %>% 
   summarise(aveEmission = mean(co2_PC))
 
@@ -162,18 +161,17 @@ gapMinder %>%
 5. (7pt) Make a barplot where you show the previous results–average CO2 emissions per capita across continents in 1960 and 2016.
 ```{r, echo = FALSE}
 gapMinder %>% 
-  group_by(region, time) %>% 
-  select(region, time, co2_PC) %>% 
   filter(!is.na(co2_PC)) %>% 
   filter(!is.na(region)) %>% 
-  filter(time <= 2016) %>% 
-  summarise(aveEmission = mean(co2_PC)) %>% 
-  ggplot(aes( time, aveEmission, fill = region)) +
-  geom_col()+
-  labs(title = "Average CO2 emissions per capita over time across the Continents (1960 - 2016)",
-       x = "time (year)",
-       y = "average CO2 emissions per capita (metric tons)", 
-       fill = "Continents")
+  filter(time == 2016| time == 1960) %>% 
+  group_by(region, time) %>% 
+  summarise(aveCO2_PC = mean(co2_PC)) %>% 
+  ggplot(aes(x = region, y = aveCO2_PC, fill = time)) +
+  geom_bar(stat = "identity", position = "dodge2") +
+  labs(title = "Total CO2 emissions per capita over time across some countries (1960 vs. 2016)",
+       x = "Continent",
+       y = "Average CO2 emissions per capita (metric tons)", 
+       fill = "Year") 
 ```
 
 6. Which countries are the three largest, and three smallest CO2 emitters (in terms of CO2 per capita) in 2019 for each continent? (Assume region is continent).
@@ -239,17 +237,35 @@ However, when looking into more details, there are some differences that can be 
 4. (6pt) Compute the average life expectancy for each continent in 1960 and 2019. Do the results fit with what do you see on the figures?
 Note: here as average I mean just average over countries, ignore the fact that countries are of different size.
 ```{r, echo = FALSE}
-
+gapMinder %>% 
+  filter(time == 1960 | time == 2019) %>% 
+  group_by(region, time) %>% 
+  filter(!is.na(lifeExpectancy)) %>% 
+  summarise(aveLifeExpectancy = mean(lifeExpectancy))
 ```
+
+Yes, the results do fit with what I see on the plots
 
 5. (8pt) Compute the average LE growth from 1960-2019 across the continents. Show the results in the order of growth. Explain what do you see.
 Hint: these data (data in long form) is not the simplest to compute growth. But you may want to check out the `lag()` function. And do not forget to group data by continent when using `lag()`
 ```{r, echo = FALSE}
-
+gapMinder %>% 
+  filter(time == 1960 | time == 2019) %>% 
+  filter(!is.na(lifeExpectancy)) %>% 
+  filter(!is.na(region)) %>% 
+  group_by(region, time) %>% 
+  summarise(aveLifeExpectancy = mean(lifeExpectancy)) %>% 
+  mutate(lagLE = lag(aveLifeExpectancy)) %>% 
+  mutate(growth = aveLifeExpectancy - lagLE) %>% 
+  filter(!is.na(growth)) %>% 
+  select(region, growth) %>% 
+  arrange(desc(growth))
+  
 ```
 
 6. (6pt) Show the histogram of GDP per capita for years of 1960 and 2019. Try to put both histograms on the same graph, see how well you can do it!
 ```{r, echo = FALSE}
+
 
 ```
 
@@ -257,18 +273,49 @@ Hint: these data (data in long form) is not the simplest to compute growth. But 
 Hint 1: check out the function `rank()`!
 Hint 2: 17 for 1960.
 ```{r, echo = FALSE}
+gapMinder %>% 
+  filter(time == 1960) %>% 
+  filter(!is.na(lifeExpectancy)) %>% 
+  filter(!is.na(name)) %>% 
+  select(name, lifeExpectancy) %>% 
+  mutate(rank1960 = rank(-lifeExpectancy)) %>% 
+  filter(name == "United States of America")
+  
+gapMinder %>% 
+  filter(time == 2019) %>% 
+  filter(!is.na(lifeExpectancy)) %>% 
+  filter(!is.na(name)) %>% 
+  select(name, lifeExpectancy) %>% 
+  mutate(rank2019 = rank(-lifeExpectancy)) %>% 
+  filter(name == "United States of America")
 
 ```
 
 8. (6pt) If you did this correctly, then you noticed that US ranking has been falling quite a bit. But we also have more countries in 2019–what about the relative rank divided by the corresponding number of countries that have LE data in the corresponding year?
 Hint: 0.0904 for 1960.
 ```{r, echo = FALSE}
+gapMinder %>% 
+  filter(time == 1960) %>% 
+  filter(!is.na(lifeExpectancy)) %>% 
+  filter(!is.na(name)) %>% 
+  select(name, lifeExpectancy) %>% 
+  mutate(rank1960 = rank(-lifeExpectancy)) %>% 
+  mutate(relativeRank1960 = rank1960 / n_distinct(name)) %>% 
+  filter(name == "United States of America")
+  
+gapMinder %>% 
+  filter(time == 2019) %>% 
+  filter(!is.na(lifeExpectancy)) %>% 
+  filter(!is.na(name)) %>% 
+  select(name, lifeExpectancy) %>% 
+  mutate(rank2019 = rank(-lifeExpectancy)) %>% 
+  mutate(relativeRank2019 = rank2019 / n_distinct(name)) %>% 
+  filter(name == "United States of America")
 
 ```
 
 ## Finally
 
 Tell us how many hours did you spend on this PS.
-- Took about 1hr 30 min to set up the assignment. (10:30am - 12pm)
-- Left and came back to this assignment (2pm - 5pm), next day (7pm - 8:30pm)()
+- Took about 9 hours
 
