@@ -266,7 +266,14 @@ gapMinder %>%
 
 6. (6pt) Show the histogram of GDP per capita for years of 1960 and 2019. Try to put both histograms on the same graph, see how well you can do it!
 ```{r, echo = FALSE}
-
+gapMinder %>% 
+  filter(time == 1960 | time == 2016) %>% 
+  filter(!is.na(GDP_PC)) %>% 
+  ggplot(aes(GDP_PC, fill = as.factor(time))) +
+  geom_histogram() +
+  labs(title = "GDP per capita (1960 vs. 2019)",
+       x = "GDP per capita",
+       fill = "Year")
 
 ```
 
