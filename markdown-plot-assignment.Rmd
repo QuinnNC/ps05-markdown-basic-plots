@@ -163,10 +163,10 @@ gapMinder %>%
 gapMinder %>% 
   filter(!is.na(co2_PC)) %>% 
   filter(!is.na(region)) %>% 
-  filter(time == 2016| time == 1960) %>% 
+  filter(time == 1960 | time == 2016) %>% 
   group_by(region, time) %>% 
   summarise(aveCO2_PC = mean(co2_PC)) %>% 
-  ggplot(aes(x = region, y = aveCO2_PC, fill = time)) +
+  ggplot(aes(x = region, y = aveCO2_PC, fill = as.factor(time))) +
   geom_bar(stat = "identity", position = "dodge2") +
   labs(title = "Total CO2 emissions per capita over time across some countries (1960 vs. 2016)",
        x = "Continent",
@@ -241,6 +241,7 @@ gapMinder %>%
   filter(time == 1960 | time == 2019) %>% 
   group_by(region, time) %>% 
   filter(!is.na(lifeExpectancy)) %>% 
+  filter(!is.na(region)) %>% 
   summarise(aveLifeExpectancy = mean(lifeExpectancy))
 ```
 
@@ -317,5 +318,6 @@ gapMinder %>%
 ## Finally
 
 Tell us how many hours did you spend on this PS.
-- Took about 9 hours
+
+This took me about 10 hours to complete. 
 
