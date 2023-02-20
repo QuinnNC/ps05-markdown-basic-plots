@@ -20,6 +20,7 @@ You first task is to do a very simple data check:
 => That would be this document right here !! ^.^
 
 2. (2pt) Load data. How many rows/columns do we have?
+
 ```{r, echo = FALSE}
 gapMinder <- read_delim("data/gapminder.csv.bz2")
 
@@ -37,6 +38,7 @@ sample_n(gapMinder, 3)
 ## 2. Descriptive statistics (15pt)
 
 1. (3pt) How many countries are there in the dataset? Analyze all three: iso3, iso2 and name.
+
 ```{r, echo = FALSE}
 iso3Distinct <- gapMinder %>% 
   filter(!is.na(iso3)) %>% 
@@ -59,6 +61,7 @@ There are `r iso3Distinct` distinct 3-letter country codes, `r iso2Distinct` dis
 2. If you did this correctly, you saw that there are more names than iso-2 codes, and there are even more iso3 -codes. What is going on? Can you find it out?
 
 (a) (5pt) Find how many names are there for each iso-2 code. Are there any iso-2 codes that correspond to more than one name? What are these countries?
+
 ```{r, echo = FALSE}
 gapMinder %>% 
   group_by(iso2) %>% 
@@ -70,6 +73,7 @@ There are two distinct name values that correspond to a single iso2 code value "
 
 (b) (5pt) Now repeat the same for name and iso3-code. Are there country names that have more than one iso3-code? What are these countries?
 Hint: two of these entitites are CHANISL and NLD CURACAO.
+
 ```{r, echo = FALSE}
 gapMinder %>% 
   group_by(name) %>% 
@@ -80,6 +84,7 @@ gapMinder %>%
 There are four distinct iso3 values that correspond to the same name value "NA", those countries are shown above.
 
 3. (2pt) What is the minimum and maximum year in these data?
+
 ```{r, echo = FALSE}
 minTime <- gapMinder %>%
   filter(!is.na(time)) %>% 
@@ -112,6 +117,7 @@ gapMinder %>%
 ```
 
 2. (5pt) Make a plot of total CO2 emissions over time for the U.S, China, and India. Add a few more countries of your choice. Explain what do you see.
+
 ```{r, echo = FALSE}
 gapMinder %>% 
   filter(name == c("United States of America", "China", "India", "Ukraine", "Italy")) %>% 
@@ -130,6 +136,7 @@ gapMinder %>%
 What this plot tells me is that the larger the nation, the greater the CO2 emissions over all, as well was the greater the increase in CO2 emission over time.
 
 3. (5pt) Now let’s analyze the CO2 emissions per capita (co2_PC). Make a similar plot of the same countries. What does this figure suggest?
+
 ```{r, echo = FALSE}
 gapMinder %>% 
   filter(name == c("United States of America", "China", "India", "Ukraine", "Italy")) %>% 
@@ -150,6 +157,7 @@ Another interesting point is that when looking at total emissions, America's inc
 4. (6pt) Compute average CO2 emissions per capita across the continents (assume region is the same as continent). Comment what do you see.
 Note: just compute averages over countries and ignore the fact that countries are of different size.
 Hint: Americas 2016 should be 4.80.
+
 ```{r, echo = FALSE}
 gapMinder %>% 
   group_by(region, time) %>% 
@@ -159,6 +167,7 @@ gapMinder %>%
 ```
 
 5. (7pt) Make a barplot where you show the previous results–average CO2 emissions per capita across continents in 1960 and 2016.
+
 ```{r, echo = FALSE}
 gapMinder %>% 
   filter(!is.na(co2_PC)) %>% 
@@ -175,6 +184,7 @@ gapMinder %>%
 ```
 
 6. Which countries are the three largest, and three smallest CO2 emitters (in terms of CO2 per capita) in 2019 for each continent? (Assume region is continent).
+
 ```{r, echo = FALSE}
 gapMinder %>% 
   filter(time == 2019) %>% 
@@ -189,6 +199,7 @@ As shown in the table above, unfortunately, the countries that are the three lar
 
 1. (8pt) Make a scatterplot of GDP per capita versus life expectancy by country, using data for 1960. Make the point size dependent on the country size, and color those according to the continent. Feel free to adjust the plot in other ways to make it better.
 Comment what do you see there.
+
 ```{r, echo = FALSE}
 gapMinder %>% 
   filter(time == 1960) %>% 
@@ -208,6 +219,7 @@ gapMinder %>%
 There seems to be a positive correlation between the two variables GDP_PC and lifeExpectancy, which translates to the higher the GDP_PC, the higher lifeExpectancy in that country. 
 
 2. (4pt) Make a similar plot, but this time use 2019 data only.
+
 ```{r, echo = FALSE}
 gapMinder %>% 
   filter(time == 2019) %>% 
@@ -236,6 +248,7 @@ However, when looking into more details, there are some differences that can be 
 
 4. (6pt) Compute the average life expectancy for each continent in 1960 and 2019. Do the results fit with what do you see on the figures?
 Note: here as average I mean just average over countries, ignore the fact that countries are of different size.
+
 ```{r, echo = FALSE}
 gapMinder %>% 
   filter(time == 1960 | time == 2019) %>% 
@@ -249,6 +262,7 @@ Yes, the results do fit with what I see on the plots
 
 5. (8pt) Compute the average LE growth from 1960-2019 across the continents. Show the results in the order of growth. Explain what do you see.
 Hint: these data (data in long form) is not the simplest to compute growth. But you may want to check out the `lag()` function. And do not forget to group data by continent when using `lag()`
+
 ```{r, echo = FALSE}
 gapMinder %>% 
   filter(time == 1960 | time == 2019) %>% 
@@ -265,6 +279,7 @@ gapMinder %>%
 ```
 
 6. (6pt) Show the histogram of GDP per capita for years of 1960 and 2019. Try to put both histograms on the same graph, see how well you can do it!
+
 ```{r, echo = FALSE}
 gapMinder %>% 
   filter(time == 1960 | time == 2016) %>% 
@@ -280,6 +295,7 @@ gapMinder %>%
 7. (6pt) What was the ranking of US in terms of life expectancy in 1960 and in 2019? (When counting from top.)
 Hint 1: check out the function `rank()`!
 Hint 2: 17 for 1960.
+
 ```{r, echo = FALSE}
 gapMinder %>% 
   filter(time == 1960) %>% 
@@ -301,6 +317,7 @@ gapMinder %>%
 
 8. (6pt) If you did this correctly, then you noticed that US ranking has been falling quite a bit. But we also have more countries in 2019–what about the relative rank divided by the corresponding number of countries that have LE data in the corresponding year?
 Hint: 0.0904 for 1960.
+
 ```{r, echo = FALSE}
 gapMinder %>% 
   filter(time == 1960) %>% 
